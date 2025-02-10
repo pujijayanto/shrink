@@ -19,7 +19,7 @@ func redirectTo(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("/{$}", home)
 	mux.HandleFunc("/", shrink)
 	mux.HandleFunc("/:slug", redirectTo)
 
