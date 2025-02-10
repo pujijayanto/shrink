@@ -19,9 +19,9 @@ func redirectTo(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/{$}", home)
-	mux.HandleFunc("/", shrink)
-	mux.HandleFunc("/{slug}", redirectTo)
+	mux.HandleFunc("GET /{$}", home)
+	mux.HandleFunc("POST /{$}", shrink)
+	mux.HandleFunc("GET /{slug}", redirectTo)
 
 	log.Println("starting server on :3200")
 	err := http.ListenAndServe(":3200", mux)
