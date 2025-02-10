@@ -1,10 +1,26 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"text/template"
+)
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
-	w.Write([]byte("Shrink is an URL shortener"))
+	ts, err := template.ParseFiles("./ui/html/pages/home.tmpl.html")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	err = ts.Execute(w, nil)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func shrink(w http.ResponseWriter, r *http.Request) {
