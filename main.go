@@ -21,7 +21,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/{$}", home)
 	mux.HandleFunc("/", shrink)
-	mux.HandleFunc("/:slug", redirectTo)
+	mux.HandleFunc("/{slug}", redirectTo)
 
 	log.Println("starting server on :3200")
 	err := http.ListenAndServe(":3200", mux)
