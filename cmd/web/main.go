@@ -2,13 +2,16 @@ package main
 
 import (
 	"flag"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func main() {
 	addr := flag.String("addr", ":3002", "http network address")
 	flag.Parse()
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
 
 	mux := http.NewServeMux()
 
@@ -19,7 +22,8 @@ func main() {
 	mux.HandleFunc("POST /{$}", shrink)
 	mux.HandleFunc("GET /{slug}", redirectTo)
 
-	log.Printf("starting server on %s", *addr)
+	logger.Info("starting server", "addr", *addr)
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	logger.Error(err.Error())
+	os.Exit(1)
 }
