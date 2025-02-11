@@ -11,7 +11,10 @@ func main() {
 	addr := flag.String("addr", ":3002", "http network address")
 	flag.Parse()
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level:     slog.LevelDebug,
+		AddSource: true,
+	}))
 
 	mux := http.NewServeMux()
 
