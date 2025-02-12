@@ -1,9 +1,13 @@
 package main
 
 import (
-	"log/slog"
+	"context"
+	"errors"
 	"net/http"
+	"strings"
 	"text/template"
+
+	"github.com/pujijayanto/shrink/internal/models"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -29,12 +33,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) shrink(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
-	app.logger.Info("received request", slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
-	w.Write([]byte("Long URL become short"))
+	originalUrl := "google.com"
+	slug := "12345ab"
+
+	insertedSlug, err := app.links.Insert(context.TODO(), originalUrl, slug)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	w.Write([]byte(insertedSlug))
 }
 
 func (app *application) redirectTo(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-	app.logger.Info("received request", slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
-	w.Write([]byte("should redirect short URL to original URL"))
+	slug := r.PathValue("slug")
+	originalUrl, err := app.links.Get(r.Context(), slug)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			http.NotFound(w, r)
+		} else {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	if !strings.HasPrefix(originalUrl, "http://") && !strings.HasPrefix(originalUrl, "https://") {
+		originalUrl = "https://" + originalUrl
+	}
+
+	http.Redirect(w, r, originalUrl, http.StatusPermanentRedirect)
 }
