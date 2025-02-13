@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"strings"
@@ -11,11 +10,8 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
 	templateFiles := []string{
-		"./ui/html/base.tmpl.html",
-		"./ui/html/partials/nav.tmpl.html",
-		"./ui/html/pages/home.tmpl.html",
+		"./ui/html/index.html",
 	}
 
 	ts, err := template.ParseFiles(templateFiles...)
@@ -24,7 +20,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	err = ts.Execute(w, nil)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -32,17 +28,29 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) shrink(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-	originalUrl := "google.com"
-	slug := "12345ab"
+	err := r.ParseMultipartForm(1 << 20)
+	if err != nil {
+		app.logger.Info("parse form error", "error", err)
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
-	insertedSlug, err := app.links.Insert(context.TODO(), originalUrl, slug)
+	originalUrl := r.Form.Get("url")
+	if originalUrl == "" {
+		app.logger.Info("URL is empty")
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	slug := doHashUsingSalt(originalUrl)
+	insertedSlug, err := app.links.Insert(r.Context(), originalUrl, slug)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	w.Write([]byte(insertedSlug))
+	shortenedUrl := buildShortUrl(insertedSlug, r)
+	w.Write([]byte(shortenedUrl))
 }
 
 func (app *application) redirectTo(w http.ResponseWriter, r *http.Request) {
