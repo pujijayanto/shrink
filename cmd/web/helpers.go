@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -33,14 +33,11 @@ func doHashUsingSalt(text string) string {
 	sha.Write([]byte(saltedText))
 	encrypted := sha.Sum(nil)
 
-	// Convert to base64 to get alphanumeric result
-	// Using URLEncoding to ensure URL-safe characters
-	base64Encoded := base64.URLEncoding.EncodeToString(encrypted)
+	// Convert to hex (will be alphanumeric only)
+	hexEncoded := hex.EncodeToString(encrypted)
 
 	// Take first 7 characters
-	slug := base64Encoded[:7]
-
-	return slug
+	return hexEncoded[:7]
 }
 
 func buildShortUrl(slug string, r *http.Request) string {
