@@ -1,3 +1,12 @@
+if (typeof originalURL !== 'undefined' && originalURL !== "" && originalURL !== "{{.OriginalURL}}") {
+  document.getElementById('shortenForm').style.display = 'none';
+  document.getElementById('redirecting').style.display = 'block';
+  document.getElementById('redirecting').textContent = 'Redirecting to original URL...';
+  setTimeout(() => {
+      window.location.href = originalURL;
+  }, 2000);
+}
+
 document.getElementById("shortenForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 

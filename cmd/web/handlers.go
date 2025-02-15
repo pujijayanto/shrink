@@ -20,7 +20,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.Execute(w, nil)
+	data := struct {
+		OriginalURL string
+	}{
+		OriginalURL: "",
+	}
+
+	err = ts.Execute(w, data)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -69,5 +75,25 @@ func (app *application) redirectTo(w http.ResponseWriter, r *http.Request) {
 		originalUrl = "https://" + originalUrl
 	}
 
-	http.Redirect(w, r, originalUrl, http.StatusPermanentRedirect)
+	templateFiles := []string{
+		"./ui/html/index.html",
+	}
+
+	ts, err := template.ParseFiles(templateFiles...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := struct {
+		OriginalURL string
+	}{
+		OriginalURL: originalUrl,
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 }

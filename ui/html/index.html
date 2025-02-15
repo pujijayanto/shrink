@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shrink</title>
-    <link rel='stylesheet' href='/static/css/main.css'>
-    <link rel='shortcut icon' href='/static/img/favicon.ico' type='image/x-icon'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Shrink!</h1>
-      <form id="shortenForm" method="POST" action="/shorten">
-        <div class="input-group">
-          <input
-            type="url"
-            name="url"
-            id="url"
-            placeholder="Enter your long URL here"
-            required
-          />
-          <button type="submit">Shrink!</button>
-        </div>
-      </form>
-      <div id="result"></div>
-      <div id="redirecting"></div>
-    </div>
-    <script src='/static/js/main.js' type='text/javascript'></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shrink</title>
+  <link rel='stylesheet' href='/static/css/main.css'>
+  <link rel='shortcut icon' href='/static/img/favicon.ico' type='image/x-icon'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Shrink!</h1>
+    <form id="shortenForm" method="POST" action="/shorten">
+      <div class="input-group">
+        <input type="url" name="url" id="url" placeholder="Enter your long URL here" required />
+        <button type="submit">Shrink!</button>
+      </div>
+    </form>
+    <div id="result"></div>
+    <div id="redirecting"></div>
+  </div>
+  <script>
+    // This will be replaced by Go template
+    const originalURL = "{{.OriginalURL}}";
+  </script>
+  <script src='/static/js/main.js' type='text/javascript'></script>
+</body>
+
 </html>
