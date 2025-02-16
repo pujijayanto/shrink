@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/pujijayanto/shrink/internal/models"
+	"github.com/pujijayanto/shrink/internal/shrinker"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -48,14 +49,20 @@ func (app *application) shrink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slug := doHashUsingSalt(originalUrl)
+	if !shrinker.ValidUrl(originalUrl) {
+		app.logger.Info("Invalid URL", "url", originalUrl)
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	slug := shrinker.BuildSlug(originalUrl)
 	insertedSlug, err := app.links.Insert(r.Context(), originalUrl, slug)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	shortenedUrl := buildShortUrl(insertedSlug, r)
+	shortenedUrl := shrinker.BuildShortUrl(insertedSlug, r)
 	w.Write([]byte(shortenedUrl))
 }
 

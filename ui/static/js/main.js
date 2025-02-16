@@ -39,6 +39,6 @@ document.getElementById("shortenForm").addEventListener("submit", async (e) => {
 
   } catch (error) {
     console.error("Error:", error);
-    document.getElementById("result").innerHTML = "Error creating short URL";
+    alert("error creating short url");
   }
 });
