@@ -42,7 +42,7 @@ func main() {
 	}
 
 	logger.Info("starting server", "addr", *addr)
-	err = appServer.ListenAndServe()
+	err = appServer.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	logger.Error(err.Error())
 	os.Exit(1)
 }
