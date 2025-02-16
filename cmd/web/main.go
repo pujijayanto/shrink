@@ -35,8 +35,14 @@ func main() {
 		links:  &models.LinkModel{DB: databasePool},
 	}
 
+	appServer := &http.Server{
+		Addr:     *addr,
+		Handler:  app.routes(),
+		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
+	}
+
 	logger.Info("starting server", "addr", *addr)
-	err = http.ListenAndServe(*addr, app.routes())
+	err = appServer.ListenAndServe()
 	logger.Error(err.Error())
 	os.Exit(1)
 }
