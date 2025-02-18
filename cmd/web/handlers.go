@@ -8,14 +8,15 @@ import (
 
 	"github.com/pujijayanto/shrink/internal/models"
 	"github.com/pujijayanto/shrink/internal/shrinker"
+	"github.com/pujijayanto/shrink/ui"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	templateFiles := []string{
-		"./ui/html/index.html",
+		"html/index.html", // Path within the embedded file system
 	}
 
-	ts, err := template.ParseFiles(templateFiles...)
+	ts, err := template.ParseFS(ui.Files, templateFiles...)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -35,7 +36,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) shrink(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseMultipartForm(1 << 20)
+	err := r.ParseForm()
 	if err != nil {
 		app.logger.Info("parse form error", "error", err)
 		app.clientError(w, http.StatusBadRequest)
@@ -83,10 +84,10 @@ func (app *application) redirectTo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	templateFiles := []string{
-		"./ui/html/index.html",
+		"html/index.html", // Path within the embedded file system
 	}
 
-	ts, err := template.ParseFiles(templateFiles...)
+	ts, err := template.ParseFS(ui.Files, templateFiles...)
 	if err != nil {
 		app.serverError(w, r, err)
 		return

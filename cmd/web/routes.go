@@ -4,14 +4,13 @@ import (
 	"net/http"
 
 	"github.com/justinas/alice"
+	"github.com/pujijayanto/shrink/ui"
 )
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-
+	mux.Handle("GET /static/", http.FileServerFS(ui.Files))
 	mux.HandleFunc("GET /", app.home)
 	mux.HandleFunc("POST /", app.shrink)
 	mux.HandleFunc("GET /{slug}", app.redirectTo)

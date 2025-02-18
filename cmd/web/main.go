@@ -15,7 +15,7 @@ import (
 
 type application struct {
 	logger *slog.Logger
-	links  *models.LinkModel
+	links  models.LinkModelInterface
 }
 
 func main() {

@@ -21,6 +21,11 @@ type LinkModel struct {
 	DB *pgxpool.Pool
 }
 
+type LinkModelInterface interface {
+	Insert(ctx context.Context, originalUrl, slug string) (string, error)
+	Get(ctx context.Context, slug string) (string, error)
+}
+
 func (m *LinkModel) Insert(ctx context.Context, originalUrl, slug string) (string, error) {
 	now := time.Now()
 
