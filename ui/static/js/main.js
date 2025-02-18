@@ -17,8 +17,15 @@ document.getElementById("shortenForm").addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/", {
       method: "POST",
-      body: formData,
+      body: new URLSearchParams(formData),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     const data = await response.text();
     urlInput.value = data;
@@ -39,6 +46,10 @@ document.getElementById("shortenForm").addEventListener("submit", async (e) => {
 
   } catch (error) {
     console.error("Error:", error);
-    alert("error creating short url");
+    alert("Error creating short URL");
+
+    // Clear the form
+    e.target.reset();
   }
 });
+
