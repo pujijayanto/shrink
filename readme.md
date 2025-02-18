@@ -52,7 +52,7 @@ Example you want to run the application with
 You can run by running
 
 ```bash
-go run ./cmd/web -port 3003 -dsn postgres://postgres:admin@localhost:5432/shrink_dev?sslmode=disable
+go run ./cmd/web -addr=":3003" -dsn="postgres://postgres:admin@localhost:5432/shrink_dev?sslmode=disable"
 ```
 
 You can adjust the value based on your setup.
@@ -63,7 +63,7 @@ You can see help by running
 go run ./cmd/web -help
 ```
 
-And you can go to `https://localhost:3002`
+And you can go to `https://localhost:3003`
 
 
 ### Running the test
